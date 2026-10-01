@@ -30,6 +30,16 @@ const mods = [
     accent: "curse"
   },
   {
+    id: "herobrine",
+    name: "Herobrine Mod",
+    category: "horror",
+    tag: "Horror",
+    version: "v2.5.0",
+    rating: 4.9,
+    description: "Experience the legendary Herobrine entity with spine-chilling encounters, mysterious structures, and eerie ambient effects.",
+    accent: "herobrine"
+  },
+  {
     id: "boost-kit",
     name: "Utility Boost",
     category: "utility",
@@ -78,6 +88,8 @@ function renderMods(list = mods) {
       badge.style.background = "linear-gradient(135deg, #ff7dcf, #ff9b71)";
     } else if (mod.accent === "curse") {
       badge.style.background = "linear-gradient(135deg, #ffa857, #ffd56b)";
+    } else if (mod.accent === "herobrine") {
+      badge.style.background = "linear-gradient(135deg, #8b0000, #ff4444)";
     } else {
       badge.style.background = "linear-gradient(135deg, #5bd38d, #8eeeb9)";
     }
