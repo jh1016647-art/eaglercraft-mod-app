@@ -51,6 +51,16 @@ const mods = [
     extreme: true
   },
   {
+    id: "anime-girl-ai",
+    name: "Anime Girl AI",
+    category: "story",
+    tag: "CURSED",
+    version: "v0.9.8",
+    rating: 4.8,
+    description: "A cursed anime companion who follows your every move, speaks in a soft obsessive voice, and believes your bond is fate.",
+    accent: "anime"
+  },
+  {
     id: "boost-kit",
     name: "Utility Boost",
     category: "utility",
@@ -112,6 +122,10 @@ function renderMods(list = mods) {
       badge.style.background = "linear-gradient(135deg, #ff1493, #ff69b4)";
       card.style.borderColor = "rgba(255, 20, 147, 0.5)";
       card.style.boxShadow = "0 0 30px rgba(255, 20, 147, 0.3), 0 10px 30px rgba(0,0,0,0.18)";
+    } else if (mod.accent === "anime") {
+      badge.style.background = "linear-gradient(135deg, #ff8fab, #7b61ff)";
+      card.style.borderColor = "rgba(123, 97, 255, 0.45)";
+      card.style.boxShadow = "0 0 24px rgba(180, 115, 255, 0.28), 0 10px 30px rgba(0,0,0,0.18)";
     } else {
       badge.style.background = "linear-gradient(135deg, #5bd38d, #8eeeb9)";
     }
