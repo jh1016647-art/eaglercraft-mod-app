@@ -54,10 +54,10 @@ const mods = [
     id: "anime-girl-ai",
     name: "Anime Girl AI",
     category: "story",
-    tag: "CURSED",
+    tag: "LOVE CURSE",
     version: "v0.9.8",
     rating: 4.8,
-    description: "A cursed anime companion who follows your every move, speaks in a soft obsessive voice, and believes your bond is fate.",
+    description: "A fictional cursed anime companion who follows you through the night, whispers your name, and says she loves you in a haunting, story-driven way.",
     accent: "anime"
   },
   {
