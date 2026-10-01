@@ -46,7 +46,7 @@ const mods = [
     tag: "EXTREME",
     version: "v1.0.0",
     rating: 5.0,
-    description: "You must RUN. If you stop, the Cat will find you and the game will shut down. Never stop moving. Can you survive?",
+    description: "A chase event where you must keep moving or the Cat catches up. It is a scare scene, not a destructive shutdown.",
     accent: "cat",
     extreme: true
   },
@@ -92,9 +92,9 @@ function renderMods(list = mods) {
     name.textContent = mod.name;
     description.textContent = mod.description;
     rating.textContent = mod.rating.toFixed(1);
-    
+
     if (mod.extreme) {
-      button.textContent = "⚠️ INSTALL";
+      button.textContent = "⚠️ RUN";
       button.addEventListener("click", () => installCatMod(mod.name));
     } else {
       button.addEventListener("click", () => installMod(mod.name));
@@ -145,13 +145,13 @@ function installMod(name) {
 }
 
 function installCatMod(name) {
-  statusPill.textContent = `⚠️ INSTALLING: ${name}`;
-  statusPill.style.background = "rgba(255, 20, 147, 0.2)";
+  statusPill.textContent = `⚠️ RUN: ${name}`;
+  statusPill.style.background = "rgba(255, 20, 147, 0.18)";
   statusPill.style.color = "#ff1493";
 
   setTimeout(() => {
     startCatChase();
-  }, 1500);
+  }, 600);
 }
 
 function startCatChase() {
@@ -165,207 +165,249 @@ function startCatChase() {
   chaseOverlay.id = "cat-chase-overlay";
   chaseOverlay.style.cssText = `
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #1a0a2e 0%, #16213e 50%, #0f3460 100%);
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #140d24 0%, #1d1631 35%, #0d1f2e 100%);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 10000;
-    flex-direction: column;
+    z-index: 9999;
+    overflow: hidden;
   `;
 
   const gameArea = document.createElement("div");
   gameArea.style.cssText = `
+    position: relative;
     width: 100%;
     height: 100%;
-    position: relative;
     overflow: hidden;
-    background: linear-gradient(to bottom, #0a0a1a 0%, #1a0a2e 50%, #2d0a3a 100%);
+    background: radial-gradient(circle at center, rgba(255,20,147,0.12), rgba(13,31,46,0.85) 35%, rgba(15,10,20,1) 100%);
   `;
+
+  const statusBanner = document.createElement("div");
+  statusBanner.style.cssText = `
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ffb5d8;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 18px;
+    text-shadow: 0 0 12px rgba(255,20,147,0.7);
+  `;
+  statusBanner.textContent = "The Cat in the Hat is chasing you";
+
+  const instructions = document.createElement("div");
+  instructions.style.cssText = `
+    position: absolute;
+    top: 64px;
+    left: 24px;
+    color: #dfeaff;
+    font-size: 15px;
+    font-weight: 700;
+    max-width: 360px;
+    line-height: 1.6;
+  `;
+  instructions.textContent = "Move with WASD or arrow keys. If you stop moving too long, the Cat catches up. This is a scare scene and resets safely.";
+
+  const timer = document.createElement("div");
+  timer.style.cssText = `
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    color: #ffa857;
+    font-size: 18px;
+    font-weight: 800;
+  `;
+  timer.textContent = "Survival: 0.0s";
 
   const player = document.createElement("div");
   player.style.cssText = `
     position: absolute;
-    width: 40px;
-    height: 60px;
-    bottom: 100px;
-    left: 50%;
-    transform: translateX(-50%);
+    width: 32px;
+    height: 52px;
     background: linear-gradient(135deg, #74d0ff, #3ec6ff);
-    border-radius: 8px;
-    z-index: 100;
+    border-radius: 10px;
+    left: 50%;
+    top: 72%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 16px rgba(116,208,255,0.7);
+    z-index: 2;
   `;
 
   const cat = document.createElement("div");
   cat.style.cssText = `
     position: absolute;
-    width: 50px;
-    height: 50px;
-    top: 50px;
+    width: 56px;
+    height: 56px;
+    left: 50%;
+    top: 18%;
+    transform: translateX(-50%);
+    font-size: 52px;
+    filter: drop-shadow(0 0 12px rgba(255,20,147,0.7));
+    z-index: 1;
+  `;
+  cat.textContent = "🎩";
+
+  const resetButton = document.createElement("button");
+  resetButton.textContent = "Exit Chase";
+  resetButton.style.cssText = `
+    position: absolute;
+    bottom: 24px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 48px;
-    z-index: 99;
-    animation: catFloat 1s infinite;
+    background: rgba(255,255,255,0.08);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-weight: 800;
+    cursor: pointer;
+    z-index: 3;
   `;
-  cat.textContent = "🎩👤";
+  resetButton.addEventListener("click", () => {
+    cleanupCatChase();
+  });
 
-  const instructions = document.createElement("div");
-  instructions.style.cssText = `
-    position: absolute;
-    top: 30px;
-    left: 30px;
-    color: #ff1493;
-    font-weight: bold;
-    font-size: 18px;
-    text-shadow: 0 0 10px rgba(255, 20, 147, 0.8);
-  `;
-  instructions.textContent = "RUN! Use arrow keys or WASD to move. Don't stop!";
-
-  const timer = document.createElement("div");
-  timer.style.cssText = `
-    position: absolute;
-    top: 30px;
-    right: 30px;
-    color: #ffa857;
-    font-weight: bold;
-    font-size: 20px;
-  `;
-
-  gameArea.appendChild(player);
-  gameArea.appendChild(cat);
+  gameArea.appendChild(statusBanner);
   gameArea.appendChild(instructions);
   gameArea.appendChild(timer);
+  gameArea.appendChild(cat);
+  gameArea.appendChild(player);
+  gameArea.appendChild(resetButton);
   chaseOverlay.appendChild(gameArea);
   body.appendChild(chaseOverlay);
 
-  let playerX = window.innerWidth / 2;
-  let playerY = window.innerHeight - 160;
-  let catX = window.innerWidth / 2;
-  let catY = 50;
-  let catSpeed = 2;
-  let survived = 0;
-  let gameRunning = true;
-  let isMoving = false;
-  let moveTimeout;
-  let distance = 0;
-
   const keys = {};
+  let playerX = window.innerWidth / 2 - 16;
+  let playerY = window.innerHeight - 180;
+  let catX = window.innerWidth / 2 - 28;
+  let catY = 100;
+  let lastMove = performance.now();
+  let lastFrame = performance.now();
+  let elapsed = 0;
+  let chaseLoopId = null;
 
-  window.addEventListener("keydown", (e) => {
-    keys[e.key.toLowerCase()] = true;
-    isMoving = true;
-    clearTimeout(moveTimeout);
-  });
-
-  window.addEventListener("keyup", (e) => {
-    keys[e.key.toLowerCase()] = false;
-    moveTimeout = setTimeout(() => {
-      isMoving = Object.values(keys).some(v => v === true);
-    }, 100);
-  });
-
-  const gameLoop = setInterval(() => {
-    if (!gameRunning) {
-      clearInterval(gameLoop);
-      return;
+  const handleKeydown = (event) => {
+    const key = event.key.toLowerCase();
+    if (["arrowleft", "arrowright", "arrowup", "arrowdown", "a", "d", "w", "s"].includes(key) || key === " ") {
+      event.preventDefault();
     }
+    keys[key] = true;
+    lastMove = performance.now();
+  };
 
-    if (keys['arrowleft'] || keys['a']) playerX -= 8;
-    if (keys['arrowright'] || keys['d']) playerX += 8;
-    if (keys['arrowup'] || keys['w']) playerY -= 8;
-    if (keys['arrowdown'] || keys['s']) playerY += 8;
+  const handleKeyup = (event) => {
+    keys[event.key.toLowerCase()] = false;
+  };
 
-    playerX = Math.max(0, Math.min(window.innerWidth - 40, playerX));
-    playerY = Math.max(0, Math.min(window.innerHeight - 60, playerY));
+  window.addEventListener("keydown", handleKeydown);
+  window.addEventListener("keyup", handleKeyup);
 
-    player.style.left = playerX + "px";
-    player.style.bottom = "auto";
-    player.style.top = playerY + "px";
+  function cleanupCatChase() {
+    if (chaseLoopId) clearInterval(chaseLoopId);
+    window.removeEventListener("keydown", handleKeydown);
+    window.removeEventListener("keyup", handleKeyup);
+    body.removeChild(chaseOverlay);
+    body.style.overflow = "auto";
+    catChaseActive = false;
+    statusPill.textContent = "Ready";
+    statusPill.style.background = "rgba(91, 211, 141, 0.12)";
+    statusPill.style.color = "#5bd38d";
+  }
 
-    if (!isMoving && survived > 0) {
-      gameRunning = false;
-      endGame(false);
-      return;
-    }
+  chaseLoopId = setInterval(() => {
+    const now = performance.now();
+    const dt = (now - lastFrame) / 1000;
+    lastFrame = now;
+    elapsed += dt;
+
+    if (keys["arrowleft"] || keys["a"]) playerX -= 260 * dt;
+    if (keys["arrowright"] || keys["d"]) playerX += 260 * dt;
+    if (keys["arrowup"] || keys["w"]) playerY -= 260 * dt;
+    if (keys["arrowdown"] || keys["s"]) playerY += 260 * dt;
+
+    playerX = Math.max(12, Math.min(window.innerWidth - 44, playerX));
+    playerY = Math.max(12, Math.min(window.innerHeight - 88, playerY));
+
+    player.style.left = `${playerX}px`;
+    player.style.top = `${playerY}px`;
 
     const dx = playerX - catX;
     const dy = playerY - catY;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    distance = Math.floor(dist);
+    const dist = Math.hypot(dx, dy);
 
+    let catSpeed = 120 + elapsed * 6;
     if (dist > 0) {
-      catX += (dx / dist) * catSpeed;
-      catY += (dy / dist) * catSpeed;
+      catX += (dx / dist) * catSpeed * dt;
+      catY += (dy / dist) * catSpeed * dt;
     }
 
-    cat.style.left = catX + "px";
-    cat.style.top = catY + "px";
+    cat.style.left = `${catX}px`;
+    cat.style.top = `${catY}px`;
 
-    survived++;
-    timer.textContent = `Survived: ${(survived / 60).toFixed(1)}s | Distance: ${Math.floor(distance)}px`;
-
-    if (dist < 60) {
-      gameRunning = false;
-      endGame(false);
-    } else {
-      catSpeed = 2 + (survived / 600);
+    const idleFor = now - lastMove;
+    if (idleFor > 1800) {
+      const freezeMessage = document.createElement("div");
+      freezeMessage.style.cssText = `
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ff1493;
+        font-size: 42px;
+        font-weight: 900;
+        text-align: center;
+        background: rgba(0,0,0,0.42);
+        z-index: 4;
+      `;
+      freezeMessage.textContent = "You froze... the Cat got closer.";
+      gameArea.appendChild(freezeMessage);
+      setTimeout(() => {
+        if (gameArea.contains(freezeMessage)) gameArea.removeChild(freezeMessage);
+      }, 1200);
+      lastMove = now;
     }
+
+    if (dist < 42) {
+      statusPill.textContent = "Caught by the Cat";
+      statusPill.style.background = "rgba(255, 20, 147, 0.2)";
+      statusPill.style.color = "#ff1493";
+
+      const finalText = document.createElement("div");
+      finalText.style.cssText = `
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 42px;
+        font-weight: 900;
+        text-align: center;
+        background: rgba(0,0,0,0.66);
+        z-index: 5;
+      `;
+      finalText.innerHTML = `
+        <div style="color:#ff1493; margin-bottom:12px;">CAUGHT!</div>
+        <div style="font-size:22px; color:#dfeaff;">The Cat in the Hat wins this round.</div>
+      `;
+      gameArea.appendChild(finalText);
+
+      setTimeout(() => {
+        cleanupCatChase();
+      }, 2000);
+
+      clearInterval(chaseLoopId);
+    }
+
+    timer.textContent = `Survival: ${(elapsed).toFixed(1)}s`;
   }, 16);
-
-  function endGame(won) {
-    clearInterval(gameLoop);
-    const endScreen = document.createElement("div");
-    endScreen.style.cssText = `
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      z-index: 200;
-    `;
-
-    if (won) {
-      endScreen.innerHTML = `
-        <h1 style="color: #5bd38d; font-size: 48px; margin: 0;">YOU ESCAPED!</h1>
-        <p style="color: #8ea0bf; font-size: 20px;">Survived: ${(survived / 60).toFixed(1)}s</p>
-      `;
-    } else {
-      endScreen.innerHTML = `
-        <h1 style="color: #ff1493; font-size: 48px; margin: 0;">CAUGHT!</h1>
-        <p style="color: #ff69b4; font-size: 20px;">The Cat got you...</p>
-        <p style="color: #8ea0bf; font-size: 16px;">Survived: ${(survived / 60).toFixed(1)}s</p>
-      `;
-    }
-
-    gameArea.appendChild(endScreen);
-
-    setTimeout(() => {
-      body.removeChild(chaseOverlay);
-      body.style.overflow = "auto";
-      catChaseActive = false;
-      statusPill.textContent = "Mod Uninstalled";
-      statusPill.style.background = "rgba(91, 211, 141, 0.12)";
-      statusPill.style.color = "#5bd38d";
-    }, 3000);
-  }
-
-  const style = document.createElement("style");
-  style.textContent = `
-    @keyframes catFloat {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(-10px); }
-    }
-  `;
-  document.head.appendChild(style);
 }
 
 navButtons.forEach((button) => {
