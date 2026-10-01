@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eaglercraft Mod App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">E</div>
+          <div>
+            <p class="eyebrow">Client</p>
+            <h1>Eaglercraft</h1>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="Main navigation">
+          <button class="nav-item active" data-filter="all">All Mods</button>
+          <button class="nav-item" data-filter="popular">Popular</button>
+          <button class="nav-item" data-filter="story">Story</button>
+          <button class="nav-item" data-filter="horror">Horror</button>
+          <button class="nav-item" data-filter="utility">Utility</button>
+        </nav>
+
+        <div class="quick-actions">
+          <button class="primary-btn" id="launchButton">Launch Eaglercraft</button>
+          <button class="secondary-btn" id="refreshButton">Refresh Mods</button>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Mod Manager</p>
+            <h2>Featured Collection</h2>
+          </div>
+          <div class="status-pill" id="statusPill">Ready</div>
+        </header>
+
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow accent">Curated build</p>
+            <h3>Enhance your world with custom lore, horror, and utility packs.</h3>
+            <p>
+              Manage your favorite Eaglercraft additions, including shader support, story mods,
+              and themed experiences.
+            </p>
+          </div>
+          <div class="hero-card">
+            <span>Current profile</span>
+            <strong>Survival + Horror Pack</strong>
+            <small>3 mods enabled</small>
+          </div>
+        </section>
+
+        <section class="mods-header">
+          <div>
+            <p class="eyebrow">Library</p>
+            <h3>Available mods</h3>
+          </div>
+          <input id="searchInput" type="search" placeholder="Search mods..." aria-label="Search mods" />
+        </section>
+
+        <section id="modGrid" class="mod-grid" aria-live="polite"></section>
+      </main>
+    </div>
+
+    <template id="modCardTemplate">
+      <article class="mod-card">
+        <div class="mod-art">
+          <div class="mod-badge"></div>
+        </div>
+        <div class="mod-body">
+          <div class="mod-meta">
+            <span class="tag"></span>
+            <span class="version"></span>
+          </div>
+          <h4 class="mod-name"></h4>
+          <p class="mod-description"></p>
+          <div class="mod-footer">
+            <div class="rating-wrap">
+              <span class="star">★</span>
+              <span class="rating"></span>
+            </div>
+            <button class="mod-button install-btn">Install</button>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <script src="script.js"></script>
+  </body>
+</html>
