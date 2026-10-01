@@ -57,8 +57,9 @@ const mods = [
     tag: "LOVE CURSE",
     version: "v0.9.8",
     rating: 4.8,
-    description: "A fictional cursed anime companion who follows you through the night, whispers your name, and says she loves you in a haunting, story-driven way.",
-    accent: "anime"
+    description: "A fictional cursed anime companion who follows you through the night and becomes visibly angry when ignored.",
+    accent: "anime",
+    warning: true
   },
   {
     id: "boost-kit",
@@ -82,6 +83,7 @@ const refreshButton = document.getElementById("refreshButton");
 
 let activeFilter = "all";
 let catChaseActive = false;
+let animeEventActive = false;
 
 function renderMods(list = mods) {
   modGrid.innerHTML = "";
@@ -106,6 +108,9 @@ function renderMods(list = mods) {
     if (mod.extreme) {
       button.textContent = "⚠️ RUN";
       button.addEventListener("click", () => installCatMod(mod.name));
+    } else if (mod.warning) {
+      button.textContent = "⚠️ WARN";
+      button.addEventListener("click", () => installAnimeMod(mod.name));
     } else {
       button.addEventListener("click", () => installMod(mod.name));
     }
@@ -156,6 +161,180 @@ function installMod(name) {
     statusPill.style.background = "rgba(91, 211, 141, 0.12)";
     statusPill.style.color = "#5bd38d";
   }, 1200);
+}
+
+function installAnimeMod(name) {
+  statusPill.textContent = `⚠️ WARNING: ${name}`;
+  statusPill.style.background = "rgba(255, 0, 97, 0.18)";
+  statusPill.style.color = "#ff5fa2";
+
+  setTimeout(() => {
+    startAnimeScare();
+  }, 600);
+}
+
+function startAnimeScare() {
+  if (animeEventActive) return;
+  animeEventActive = true;
+
+  const body = document.body;
+  body.style.overflow = "hidden";
+
+  const overlay = document.createElement("div");
+  overlay.style.cssText = `
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, rgba(26, 13, 36, 0.94), rgba(13, 20, 40, 0.96));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    overflow: hidden;
+  `;
+
+  const scene = document.createElement("div");
+  scene.style.cssText = `
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: radial-gradient(circle at center, rgba(255, 95, 162, 0.18), rgba(10,12,27,0.9) 40%, rgba(1,1,10,1) 100%);
+  `;
+
+  const warning = document.createElement("div");
+  warning.style.cssText = `
+    position: absolute;
+    top: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ffd4eb;
+    font-size: clamp(18px, 2vw, 32px);
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-shadow: 0 0 14px rgba(255, 95, 162, 0.8);
+    z-index: 3;
+  `;
+  warning.textContent = "She is angry";
+
+  const text = document.createElement("div");
+  text.style.cssText = `
+    position: absolute;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(700px, 80vw);
+    color: #f8e7ff;
+    text-align: center;
+    line-height: 1.7;
+    font-size: 18px;
+    font-weight: 700;
+    z-index: 3;
+  `;
+  text.textContent = "You ignored her... now she is staring at the screen, whispering your name, and waiting for you to answer.";
+
+  const girl = document.createElement("div");
+  girl.style.cssText = `
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    height: 220px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(255, 155, 199, 0.42), rgba(123, 97, 255, 0.26));
+    border: 2px solid rgba(255, 188, 218, 0.48);
+    box-shadow: 0 0 22px rgba(255, 95, 162, 0.5), inset 0 0 20px rgba(255,255,255,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 96px;
+    z-index: 2;
+    animation: pulse 1.8s infinite ease-in-out;
+  `;
+  girl.textContent = "👧";
+
+  const mood = document.createElement("div");
+  mood.style.cssText = `
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 999px;
+    padding: 12px 18px;
+    color: #ffd4eb;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    z-index: 3;
+  `;
+  mood.textContent = "Stay calm";
+
+  const exitButton = document.createElement("button");
+  exitButton.textContent = "Close warning";
+  exitButton.style.cssText = `
+    position: absolute;
+    bottom: 110px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-weight: 800;
+    cursor: pointer;
+    z-index: 4;
+  `;
+  exitButton.addEventListener("click", closeAnimeScare);
+
+  scene.appendChild(warning);
+  scene.appendChild(text);
+  scene.appendChild(girl);
+  scene.appendChild(mood);
+  scene.appendChild(exitButton);
+  overlay.appendChild(scene);
+  body.appendChild(overlay);
+
+  const style = document.createElement("style");
+  style.textContent = `
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 18px rgba(255, 95, 162, 0.4); }
+      50% { transform: translate(-50%, -50%) scale(1.06); box-shadow: 0 0 30px rgba(255, 95, 162, 0.75); }
+    }
+  `;
+  document.head.appendChild(style);
+
+  const startX = window.innerWidth / 2;
+  const startY = window.innerHeight / 2;
+  let x = startX;
+  let y = startY;
+  let angle = 0;
+
+  function animate() {
+    angle += 0.04;
+    x = startX + Math.sin(angle) * 120;
+    y = startY + Math.cos(angle * 1.6) * 70;
+    girl.style.left = `${x}px`;
+    girl.style.top = `${y}px`;
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+
+  function closeAnimeScare() {
+    body.removeChild(overlay);
+    body.style.overflow = "auto";
+    animeEventActive = false;
+    statusPill.textContent = "Ready";
+    statusPill.style.background = "rgba(91, 211, 141, 0.12)";
+    statusPill.style.color = "#5bd38d";
+    document.head.removeChild(style);
+  }
 }
 
 function installCatMod(name) {
