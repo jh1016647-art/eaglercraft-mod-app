@@ -53,13 +53,13 @@ const mods = [
   {
     id: "anime-girl-ai",
     name: "Anime Girl AI",
-    category: "story",
-    tag: "LOVE CURSE",
-    version: "v0.9.8",
+    category: "horror",
+    tag: "EXTREME",
+    version: "v0.9.1",
     rating: 4.8,
-    description: "A fictional cursed anime companion who follows you through the night and becomes visibly angry when ignored.",
+    description: "A stylized anime-inspired ghost scene with glowing eyes, drifting hair, and a quiet classroom dread that resets safely.",
     accent: "anime",
-    warning: true
+    extreme: true
   },
   {
     id: "boost-kit",
@@ -83,7 +83,7 @@ const refreshButton = document.getElementById("refreshButton");
 
 let activeFilter = "all";
 let catChaseActive = false;
-let animeEventActive = false;
+let animeSceneActive = false;
 
 function renderMods(list = mods) {
   modGrid.innerHTML = "";
@@ -107,10 +107,13 @@ function renderMods(list = mods) {
 
     if (mod.extreme) {
       button.textContent = "⚠️ RUN";
-      button.addEventListener("click", () => installCatMod(mod.name));
-    } else if (mod.warning) {
-      button.textContent = "⚠️ WARN";
-      button.addEventListener("click", () => installAnimeMod(mod.name));
+      button.addEventListener("click", () => {
+        if (mod.id === "anime-girl-ai") {
+          installAnimeGirlMod(mod.name);
+        } else {
+          installCatMod(mod.name);
+        }
+      });
     } else {
       button.addEventListener("click", () => installMod(mod.name));
     }
@@ -128,9 +131,9 @@ function renderMods(list = mods) {
       card.style.borderColor = "rgba(255, 20, 147, 0.5)";
       card.style.boxShadow = "0 0 30px rgba(255, 20, 147, 0.3), 0 10px 30px rgba(0,0,0,0.18)";
     } else if (mod.accent === "anime") {
-      badge.style.background = "linear-gradient(135deg, #ff8fab, #7b61ff)";
-      card.style.borderColor = "rgba(123, 97, 255, 0.45)";
-      card.style.boxShadow = "0 0 24px rgba(180, 115, 255, 0.28), 0 10px 30px rgba(0,0,0,0.18)";
+      badge.style.background = "linear-gradient(135deg, #9a4dff, #ff5ba8)";
+      card.style.borderColor = "rgba(154, 77, 255, 0.45)";
+      card.style.boxShadow = "0 0 28px rgba(154, 77, 255, 0.22), 0 12px 30px rgba(0,0,0,0.2)";
     } else {
       badge.style.background = "linear-gradient(135deg, #5bd38d, #8eeeb9)";
     }
@@ -163,180 +166,6 @@ function installMod(name) {
   }, 1200);
 }
 
-function installAnimeMod(name) {
-  statusPill.textContent = `⚠️ WARNING: ${name}`;
-  statusPill.style.background = "rgba(255, 0, 97, 0.18)";
-  statusPill.style.color = "#ff5fa2";
-
-  setTimeout(() => {
-    startAnimeScare();
-  }, 600);
-}
-
-function startAnimeScare() {
-  if (animeEventActive) return;
-  animeEventActive = true;
-
-  const body = document.body;
-  body.style.overflow = "hidden";
-
-  const overlay = document.createElement("div");
-  overlay.style.cssText = `
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    background: linear-gradient(135deg, rgba(26, 13, 36, 0.94), rgba(13, 20, 40, 0.96));
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    overflow: hidden;
-  `;
-
-  const scene = document.createElement("div");
-  scene.style.cssText = `
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: radial-gradient(circle at center, rgba(255, 95, 162, 0.18), rgba(10,12,27,0.9) 40%, rgba(1,1,10,1) 100%);
-  `;
-
-  const warning = document.createElement("div");
-  warning.style.cssText = `
-    position: absolute;
-    top: 28px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #ffd4eb;
-    font-size: clamp(18px, 2vw, 32px);
-    font-weight: 900;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    text-shadow: 0 0 14px rgba(255, 95, 162, 0.8);
-    z-index: 3;
-  `;
-  warning.textContent = "She is angry";
-
-  const text = document.createElement("div");
-  text.style.cssText = `
-    position: absolute;
-    top: 90px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(700px, 80vw);
-    color: #f8e7ff;
-    text-align: center;
-    line-height: 1.7;
-    font-size: 18px;
-    font-weight: 700;
-    z-index: 3;
-  `;
-  text.textContent = "You ignored her... now she is staring at the screen, whispering your name, and waiting for you to answer.";
-
-  const girl = document.createElement("div");
-  girl.style.cssText = `
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 180px;
-    height: 220px;
-    border-radius: 18px;
-    background: linear-gradient(180deg, rgba(255, 155, 199, 0.42), rgba(123, 97, 255, 0.26));
-    border: 2px solid rgba(255, 188, 218, 0.48);
-    box-shadow: 0 0 22px rgba(255, 95, 162, 0.5), inset 0 0 20px rgba(255,255,255,0.12);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 96px;
-    z-index: 2;
-    animation: pulse 1.8s infinite ease-in-out;
-  `;
-  girl.textContent = "👧";
-
-  const mood = document.createElement("div");
-  mood.style.cssText = `
-    position: absolute;
-    bottom: 28px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 999px;
-    padding: 12px 18px;
-    color: #ffd4eb;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    z-index: 3;
-  `;
-  mood.textContent = "Stay calm";
-
-  const exitButton = document.createElement("button");
-  exitButton.textContent = "Close warning";
-  exitButton.style.cssText = `
-    position: absolute;
-    bottom: 110px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(255,255,255,0.08);
-    color: white;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
-    padding: 12px 18px;
-    font-weight: 800;
-    cursor: pointer;
-    z-index: 4;
-  `;
-  exitButton.addEventListener("click", closeAnimeScare);
-
-  scene.appendChild(warning);
-  scene.appendChild(text);
-  scene.appendChild(girl);
-  scene.appendChild(mood);
-  scene.appendChild(exitButton);
-  overlay.appendChild(scene);
-  body.appendChild(overlay);
-
-  const style = document.createElement("style");
-  style.textContent = `
-    @keyframes pulse {
-      0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 18px rgba(255, 95, 162, 0.4); }
-      50% { transform: translate(-50%, -50%) scale(1.06); box-shadow: 0 0 30px rgba(255, 95, 162, 0.75); }
-    }
-  `;
-  document.head.appendChild(style);
-
-  const startX = window.innerWidth / 2;
-  const startY = window.innerHeight / 2;
-  let x = startX;
-  let y = startY;
-  let angle = 0;
-
-  function animate() {
-    angle += 0.04;
-    x = startX + Math.sin(angle) * 120;
-    y = startY + Math.cos(angle * 1.6) * 70;
-    girl.style.left = `${x}px`;
-    girl.style.top = `${y}px`;
-    requestAnimationFrame(animate);
-  }
-
-  animate();
-
-  function closeAnimeScare() {
-    body.removeChild(overlay);
-    body.style.overflow = "auto";
-    animeEventActive = false;
-    statusPill.textContent = "Ready";
-    statusPill.style.background = "rgba(91, 211, 141, 0.12)";
-    statusPill.style.color = "#5bd38d";
-    document.head.removeChild(style);
-  }
-}
-
 function installCatMod(name) {
   statusPill.textContent = `⚠️ RUN: ${name}`;
   statusPill.style.background = "rgba(255, 20, 147, 0.18)";
@@ -344,6 +173,16 @@ function installCatMod(name) {
 
   setTimeout(() => {
     startCatChase();
+  }, 600);
+}
+
+function installAnimeGirlMod(name) {
+  statusPill.textContent = `⚠️ RUN: ${name}`;
+  statusPill.style.background = "rgba(154, 77, 255, 0.18)";
+  statusPill.style.color = "#d39dff";
+
+  setTimeout(() => {
+    startAnimeGirlScene();
   }, 600);
 }
 
@@ -601,6 +440,258 @@ function startCatChase() {
 
     timer.textContent = `Survival: ${(elapsed).toFixed(1)}s`;
   }, 16);
+}
+
+function startAnimeGirlScene() {
+  if (animeSceneActive) return;
+  animeSceneActive = true;
+
+  const body = document.body;
+  body.style.overflow = "hidden";
+
+  const overlay = document.createElement("div");
+  overlay.id = "anime-scene-overlay";
+  overlay.style.cssText = `
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(180deg, rgba(15, 12, 25, 0.96) 0%, rgba(26, 15, 30, 0.96) 35%, rgba(11, 14, 32, 1) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    overflow: hidden;
+  `;
+
+  const scene = document.createElement("div");
+  scene.style.cssText = `
+    position: relative;
+    width: min(100%, 1100px);
+    height: min(100%, 700px);
+    overflow: hidden;
+    border-radius: 28px;
+    background: radial-gradient(circle at 50% 30%, rgba(182, 112, 255, 0.18), rgba(24, 12, 30, 0.9) 32%, rgba(8, 10, 16, 1) 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 0 40px rgba(154, 77, 255, 0.22);
+  `;
+
+  const title = document.createElement("div");
+  title.style.cssText = `
+    position: absolute;
+    top: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #f7d9ff;
+    font-weight: 900;
+    font-size: 18px;
+    text-shadow: 0 0 16px rgba(205, 112, 255, 0.8);
+  `;
+  title.textContent = "AI Ghost Room";
+
+  const text = document.createElement("div");
+  text.style.cssText = `
+    position: absolute;
+    top: 70px;
+    left: 30px;
+    width: 320px;
+    color: #dfeaff;
+    font-size: 15px;
+    line-height: 1.7;
+    font-weight: 700;
+    text-shadow: 0 0 14px rgba(255,255,255,0.12);
+  `;
+  text.textContent = "Stay still for too long and the room starts listening. This is a safe, stylized scare scene—nothing harmful, just eerie atmosphere.";
+
+  const girlWrap = document.createElement("div");
+  girlWrap.style.cssText = `
+    position: absolute;
+    left: 50%;
+    top: 56%;
+    transform: translate(-50%, -50%);
+    width: 220px;
+    height: 360px;
+    filter: drop-shadow(0 0 18px rgba(238, 144, 255, 0.35));
+    z-index: 2;
+  `;
+
+  const hair = document.createElement("div");
+  hair.style.cssText = `
+    position: absolute;
+    left: 50%;
+    top: 10px;
+    width: 170px;
+    height: 190px;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, rgba(31, 12, 36, 0.9), rgba(10, 10, 18, 0.95));
+    border-radius: 48% 52% 42% 58% / 56% 48% 52% 44%;
+    box-shadow: inset 0 0 18px rgba(255,255,255,0.08);
+  `;
+
+  const face = document.createElement("div");
+  face.style.cssText = `
+    position: absolute;
+    left: 50%;
+    top: 86px;
+    width: 94px;
+    height: 104px;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, rgba(245, 220, 255, 0.92), rgba(232, 203, 245, 0.74));
+    border-radius: 42% 42% 46% 46%;
+    box-shadow: inset 0 0 22px rgba(255,255,255,0.18);
+  `;
+
+  const eyeLeft = document.createElement("div");
+  eyeLeft.style.cssText = `
+    position: absolute;
+    left: 50%;
+    top: 120px;
+    width: 16px;
+    height: 18px;
+    transform: translateX(-30px);
+    background: linear-gradient(180deg, #f0f5ff, #7fd3ff);
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(127,211,255,0.8);
+  `;
+
+  const eyeRight = document.createElement("div");
+  eyeRight.style.cssText = `
+    position: absolute;
+    left: 50%;
+    top: 120px;
+    width: 16px;
+    height: 18px;
+    transform: translateX(14px);
+    background: linear-gradient(180deg, #f0f5ff, #7fd3ff);
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(127,211,255,0.8);
+  `;
+
+  const smile = document.createElement("div");
+  smile.style.cssText = `
+    position: absolute;
+    left: 50%;
+    top: 154px;
+    width: 30px;
+    height: 16px;
+    transform: translateX(-50%);
+    border-bottom: 4px solid rgba(77, 33, 67, 0.7);
+    border-radius: 0 0 18px 18px;
+  `;
+
+  const body = document.createElement("div");
+  body.style.cssText = `
+    position: absolute;
+    left: 50%;
+    bottom: 30px;
+    width: 110px;
+    height: 140px;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, rgba(96, 72, 164, 0.9), rgba(45, 33, 78, 0.9));
+    border-radius: 18px 18px 24px 24px;
+    box-shadow: inset 0 0 24px rgba(255,255,255,0.06);
+  `;
+
+  const armLeft = document.createElement("div");
+  armLeft.style.cssText = `
+    position: absolute;
+    left: 25px;
+    bottom: 48px;
+    width: 22px;
+    height: 90px;
+    background: rgba(50, 35, 82, 0.8);
+    border-radius: 30px;
+    transform: rotate(18deg);
+  `;
+
+  const armRight = document.createElement("div");
+  armRight.style.cssText = `
+    position: absolute;
+    right: 25px;
+    bottom: 48px;
+    width: 22px;
+    height: 90px;
+    background: rgba(50, 35, 82, 0.8);
+    border-radius: 30px;
+    transform: rotate(-18deg);
+  `;
+
+  const shadow = document.createElement("div");
+  shadow.style.cssText = `
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    width: 190px;
+    height: 30px;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.45);
+    border-radius: 50%;
+    filter: blur(12px);
+  `;
+
+  girlWrap.appendChild(hair);
+  girlWrap.appendChild(face);
+  girlWrap.appendChild(eyeLeft);
+  girlWrap.appendChild(eyeRight);
+  girlWrap.appendChild(smile);
+  girlWrap.appendChild(body);
+  girlWrap.appendChild(armLeft);
+  girlWrap.appendChild(armRight);
+  girlWrap.appendChild(shadow);
+
+  const exitButton = document.createElement("button");
+  exitButton.textContent = "Exit Scene";
+  exitButton.style.cssText = `
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
+    z-index: 4;
+  `;
+
+  exitButton.addEventListener("click", () => cleanupAnimeGirlScene());
+
+  scene.appendChild(title);
+  scene.appendChild(text);
+  scene.appendChild(girlWrap);
+  scene.appendChild(exitButton);
+  overlay.appendChild(scene);
+  body.appendChild(overlay);
+
+  let animFrame = null;
+  let phase = 0;
+
+  function animateScene() {
+    phase += 0.03;
+    const driftX = Math.sin(phase) * 28;
+    const driftY = Math.cos(phase * 1.6) * 18;
+    const sway = Math.sin(phase * 1.3) * 8;
+    girlWrap.style.transform = `translate(-50%, -50%) translate(${driftX}px, ${driftY}px) rotate(${sway}deg)`;
+    eyeLeft.style.transform = `translateX(-30px) scale(${1 + Math.sin(phase * 2.5) * 0.15})`;
+    eyeRight.style.transform = `translateX(14px) scale(${1 + Math.sin(phase * 2.5 + 0.7) * 0.15})`;
+    animFrame = requestAnimationFrame(animateScene);
+  }
+
+  function cleanupAnimeGirlScene() {
+    if (animFrame) cancelAnimationFrame(animFrame);
+    body.removeChild(overlay);
+    body.style.overflow = "auto";
+    animeSceneActive = false;
+    statusPill.textContent = "Ready";
+    statusPill.style.background = "rgba(91, 211, 141, 0.12)";
+    statusPill.style.color = "#5bd38d";
+  }
+
+  animateScene();
 }
 
 navButtons.forEach((button) => {
